@@ -96,6 +96,9 @@ if [ $NEW_VER != $CUR_VER ]; then
     find $DIR/bin/ -maxdepth 1 -type f ! -newer $DIR/bin/gitea-$CUR_VER-$ARCH ! \
     -wholename $DIR/bin/gitea-$CUR_VER-$ARCH -delete
   fi
+  if [ $DEBUG -eq 1 ]; then
+    echo "Gitea upgraded to v$NEW_VER"
+  fi
 else
   if [ $DEBUG -eq 1 ]; then
     echo "The latest version is already installed"
