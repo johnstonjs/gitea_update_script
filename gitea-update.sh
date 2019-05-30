@@ -1,0 +1,37 @@
+#/bin/sh
+
+# Set location of gitea binary on local system
+FILE=/usr/local/bin/gitea/gitea
+# Set architecture type:
+  # darwin-10.6.386 darwin-10.6-amd64 linux-386
+  # linux-arm-5,6,7,arm64,mips,mips64,mips64le
+ARCH=linux-amd64
+
+DEBUG=1
+
+get_latest_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
+    grep '"tag_name":' |                                            # Get tag line
+    sed -E 's/.*"([^"]+)".*/\1/' |                                  # Pluck JSON value
+    cut -c 2-                                                       # Remove the leading "v"
+# Usage
+# $ get_latest_release "creationix/nvm"
+# 0.31.4
+# Adapted from:
+# https://gist.github.com/lukechilds/a83e1d7127b78fef38c2914c4ececc3c
+}
+
+# Set variable #cur_ver by checking release status from GitHub
+cur_ver=$(get_latest_release "go-gitea/gitea")
+
+if [ $DEBUG -eq 1 ]; then
+  echo $cur_ver
+fi
+
+# Check if gitea binary exists at specified $FILE
+if test -f "$FILE"; then
+  echo " $FILE exists "
+else
+  echo "ERROR: $FILE does not exist"
+  exit 1
+fi
