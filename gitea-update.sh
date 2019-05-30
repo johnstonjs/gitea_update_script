@@ -69,9 +69,7 @@ if [ $NEW_VER != $CUR_VER ]; then
   echo "gitea-$NEW_VER-$ARCH: OK"
   echo $SHA_VALID
   if [ $SHA_CHECK = $SHA_VALID ]; then
-    if [ $DEBUG -eq 1 ]; then
-      echo "SHA256 verified"
-    fi
+    echo "SHA256 verified"
   else
     echo "ERROR: SHA256 check failed"
   fi
