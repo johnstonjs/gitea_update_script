@@ -64,7 +64,7 @@ if [ $NEW_VER != $CUR_VER ]; then
   # Download the SHA256 checksum of the latest Gitea binary
   (cd $DIR/bin && curl -O -L https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256)
   # Verify the checksum of the latest Gitea binary
-  if [ $DIR/bin/gitea-$NEW_VER-$ARCH.sha256 -eq exec (cd $DIR/bin && sha256sum gitea-$NEW_VER-$ARCH) ]; then
+  if [ $DIR/bin/gitea-$NEW_VER-$ARCH.sha256 -eq (cd $DIR/bin && sha256sum gitea-$NEW_VER-$ARCH) ]; then
     if [ $DEBUG -eq 1 ]; then
       echo "SHA256 verified"
     fi
