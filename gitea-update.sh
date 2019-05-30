@@ -29,8 +29,8 @@ get_current_version() {
 }
 
 # Set variable #new_ver by checking release status from GitHub
-new_ver=$(get_latest_release "go-gitea/gitea")
-
+NEW_VER=$(get_latest_release "go-gitea/gitea")
+NEW_VER=1.8.2
 if [ $DEBUG -eq 1 ]; then
   echo "New Version:    $NEW_VER"
 fi
@@ -46,7 +46,7 @@ else
 fi
 
 # Check current version
-cur_ver=$(get_current_version $DIR/gitea)
+CUR_VER=$(get_current_version $DIR/gitea)
 
 if [ $DEBUG -eq 1 ]; then
   echo "Current Version: $CUR_VER"
