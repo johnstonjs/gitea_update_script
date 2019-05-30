@@ -76,7 +76,8 @@ if [ $NEW_VER != $CUR_VER ]; then
   # Start the Gitea service
   service gitea start
   if [ $PRUNE -eq 1 ]; then
-    find $DIR/bin/ -type f ! -newer gitea-$CUR_VER-$ARCH ! -name gitea-$CUR_VER-$ARCH -delete
+    find $DIR/bin/ -type f ! -newer $DIR/bin/gitea-$CUR_VER-$ARCH ! \
+    -name $DIR/bin/gitea-$CUR_VER-$ARCH -delete
   fi
 else
   if [ $DEBUG -eq 1 ]; then
