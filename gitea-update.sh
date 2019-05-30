@@ -1,6 +1,6 @@
 #!/bin/sh
 # A shell script to automatically update Gitea
-# Depends only on basic shell utilities (curl, cut, find, grep, sed, wget)
+# Depends only on basic shell utilities (curl, cut, find, grep, sed)
 # Assumes use of systemd for Gitea start/stop
 
 
@@ -61,9 +61,9 @@ if [ $NEW_VER != $CUR_VER ]; then
   fi
   # Download the latest version of Gitea binary
   #wget -N https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
-  ( cd $DIR/bin && curl -O -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH )
+  ( cd $DIR/bin && curl -s -O -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH )
   # Verify the checksum of the latest Gitea binary
-  SHA_CHECK=$(cd $DIR/bin && curl -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c | cut -d " " -f 2)
+  SHA_CHECK=$(cd $DIR/bin && curl -s -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c | cut -d " " -f 2)
   if [ $SHA_CHECK = "OK" ]; then
     if [ $DEBUG -eq 1 ]; then
       echo "SHA256 verified"
