@@ -1,4 +1,7 @@
 #!/bin/sh
+# A shell script to automatically update Gitea
+# Depends only on basic shell utilities (curl, cut, grep, sed, wget)
+# Assumes use of systemd for Gitea start/stop
 
 # Set location of gitea binary on local system
 DIR=/usr/local/bin/gitea
