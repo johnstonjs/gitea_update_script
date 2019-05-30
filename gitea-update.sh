@@ -59,7 +59,20 @@ if [ $NEW_VER != $CUR_VER ]; then
     echo "There is a newer release available, downloading..."
   fi
   # Download the latest version of Gitea binary
-  wget -N https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
+  #wget -N https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
+  (cd $DIR/bin && curl -O -L https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH)
+  # Download the SHA256 checksum of the latest Gitea binary
+  (cd $DIR/bin && curl -O -L https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256)
+  # Verify the checksum of the latest Gitea binary
+  if [ $DIR/bin/gitea-$NEW_VER-$ARCH.sha256 -eq exec (cd $DIR/bin && sha256sum gitea-$NEW_VER-$ARCH)]; then
+    if [ $DEBUG -eq 1 ]; then
+      echo "SHA256 verified"
+    fi
+  else
+    echo "ERROR: SHA256 check failed"
+  fi
+  # Remove the SHA256 checksum file
+  rm $DIR/bin/gitea-$NEW_VER-$ARCH.sha256
   # Set USER/GROUP ownership for new Gitea binary
   chown $USER:$GROUP $DIR/bin/gitea-$NEW_VER-$ARCH
   # Set permissions for new Gitea binary (rwxr-x---)
@@ -74,7 +87,12 @@ if [ $NEW_VER != $CUR_VER ]; then
   # Update the symlink at $DIR/gitea to pint to latest Gitea binary
   ln -sf $DIR/bin/gitea-$NEW_VER-$ARCH $DIR/gitea
   # Start the Gitea service
-  service gitea start
+  case $INIT_TYPE in
+    systemd)
+      service gitea start
+      ;;
+    *)
+  esac
   if [ $PRUNE -eq 1 ]; then
     find $DIR/bin/ -maxdepth 1 -type f ! -newer $DIR/bin/gitea-$CUR_VER-$ARCH ! \
     -wholename $DIR/bin/gitea-$CUR_VER-$ARCH -delete
