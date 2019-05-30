@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 # Set location of gitea binary on local system
 DIR=/usr/local/bin/gitea
@@ -7,6 +7,8 @@ DIR=/usr/local/bin/gitea
   # darwin-10.6.386 darwin-10.6-amd64 linux-386
   # linux-arm-5,6,7,arm64,mips,mips64,mips64le
 ARCH=linux-amd64
+USER=root
+GROUP=git
 
 DEBUG=1
 
@@ -30,7 +32,7 @@ get_current_version() {
 new_ver=$(get_latest_release "go-gitea/gitea")
 
 if [ $DEBUG -eq 1 ]; then
-  echo "New Version:    $new_ver"
+  echo "New Version:    $NEW_VER"
 fi
 
 # Check if gitea binary exists at specified $FILE
@@ -47,14 +49,25 @@ fi
 cur_ver=$(get_current_version $DIR/gitea)
 
 if [ $DEBUG -eq 1 ]; then
-  echo "Current Version: $cur_ver"
+  echo "Current Version: $CUR_VER"
 fi
 
-if [ $new_ver != $cur_ver ]; then
+if [ $NEW_VER != $CUR_VER ]; then
   if [ $DEBUG -eq 1 ]; then
     echo "There is a newer release available, downloading..."
   fi
-  #wget -N https://dl.gitea.io/gitea/$VERSION/gitea-$VERSION-$ARCH -P $DIR/bin/
+  # Download the latest version of Gitea binary
+  wget -N https://dl.gitea.io/gitea/$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
+  # Set USER/GROUP ownership for new Gitea binary
+  chown $USER:$GROUP $DIR/bin/gitea-$NEW_VER-$ARCH
+  # Set permissions for new Gitea binary (rwxr-x---)
+  chmod 0750 $DIR/bin/gitea-$NEW_VER-$ARCH
+  # Stop the Gitea service
+  service gitea stop
+  # Update the symlink at $DIR/gitea to pint to latest Gitea binary
+  ln -sf $DIR/bin/gitea-$NEW_VER-$ARCH $DIR/gitea
+  # Start the Gitea service
+  service gitea start
 
 else
   if [ $DEBUG -eq 1 ]; then
