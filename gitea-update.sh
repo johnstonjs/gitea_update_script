@@ -64,7 +64,7 @@ if [ $NEW_VER != $CUR_VER ]; then
   ( cd $DIR/bin && curl -O -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH )
   # Verify the checksum of the latest Gitea binary
   SHA_CHECK=$(cd $DIR/bin && curl -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c)
-
+  echo "gitea-$NEW_VER-$ARCH: OK"
   if [ $SHA_CHECK -eq "gitea-$NEW_VER-$ARCH: OK" ]; then
     if [ $DEBUG -eq 1 ]; then
       echo "SHA256 verified"
@@ -72,8 +72,6 @@ if [ $NEW_VER != $CUR_VER ]; then
   else
     echo "ERROR: SHA256 check failed"
   fi
-  # Remove the SHA256 checksum file
-  rm $DIR/bin/gitea-$NEW_VER-$ARCH.sha256
   # Set USER/GROUP ownership for new Gitea binary
   chown $USER:$GROUP $DIR/bin/gitea-$NEW_VER-$ARCH
   # Set permissions for new Gitea binary (rwxr-x---)
