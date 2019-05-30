@@ -5,6 +5,7 @@
 
 
 DIR=/usr/local/bin/gitea    # Set location of gitea binary on local system
+URL=https://github.com/go-gitea/gitea/releases/download
 ARCH=linux-amd64            # Set architecture type:
                             # darwin-10.6.386 darwin-10.6-amd64 linux-386
                             # linux-arm-5,6,7,arm64,mips,mips64,mips64le
@@ -60,11 +61,12 @@ if [ $NEW_VER != $CUR_VER ]; then
   fi
   # Download the latest version of Gitea binary
   #wget -N https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
-  (cd $DIR/bin && curl -O -L https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH)
-  # Download the SHA256 checksum of the latest Gitea binary
-  (cd $DIR/bin && curl -O -L https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256)
+  ( cd $DIR/bin && curl -O -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH )
   # Verify the checksum of the latest Gitea binary
-  if [ $DIR/bin/gitea-$NEW_VER-$ARCH.sha256 -eq (cd $DIR/bin && sha256sum gitea-$NEW_VER-$ARCH) ]; then
+  SHA_CHECK = ( cd $DIR/bin && curl -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 \
+    | sha256sum --check --strict )
+
+  if [ $SHA_CHECK -eq "gitea-$NEW_VER-$ARCH: OK" ]; then
     if [ $DEBUG -eq 1 ]; then
       echo "SHA256 verified"
     fi
