@@ -21,17 +21,29 @@ get_latest_release() {
 # https://gist.github.com/lukechilds/a83e1d7127b78fef38c2914c4ececc3c
 }
 
-# Set variable #cur_ver by checking release status from GitHub
-cur_ver=$(get_latest_release "go-gitea/gitea")
+get_current_version() {
+  eval $1 -v | cut -d " " -f 3
+}
+
+# Set variable #new_ver by checking release status from GitHub
+new_ver=$(get_latest_release "go-gitea/gitea")
 
 if [ $DEBUG -eq 1 ]; then
-  echo $cur_ver
+  echo $new_ver
 fi
 
 # Check if gitea binary exists at specified $FILE
 if test -f "$FILE"; then
-  echo " $FILE exists "
+  echo "$FILE exists"
 else
   echo "ERROR: $FILE does not exist"
-  exit 1
+  #exit 1
+fi
+
+# Check current version
+#cur_ver=$(cut -d " " -f 3 test_output.txt)
+cur_ver=$(get_current_version $FILE)
+
+if [ $DEBUG -eq 1 ]; then
+  echo $cur_ver
 fi
