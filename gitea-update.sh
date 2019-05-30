@@ -57,7 +57,7 @@ if [ $NEW_VER != $CUR_VER ]; then
     echo "There is a newer release available, downloading..."
   fi
   # Download the latest version of Gitea binary
-  wget -N https://dl.gitea.io/gitea/$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
+  wget -N https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
   # Set USER/GROUP ownership for new Gitea binary
   chown $USER:$GROUP $DIR/bin/gitea-$NEW_VER-$ARCH
   # Set permissions for new Gitea binary (rwxr-x---)
