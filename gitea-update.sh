@@ -45,7 +45,7 @@ if test -f "$DIR/gitea"; then
   fi
 else
   echo "ERROR: $DIR/gitea does not exist"
-  exit 1
+  exit 0
 fi
 
 # Check current version
@@ -65,9 +65,12 @@ if [ $NEW_VER != $CUR_VER ]; then
   # Verify the checksum of the latest Gitea binary
   SHA_CHECK=$(cd $DIR/bin && curl -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c | cut -d " " -f 2)
   if [ $SHA_CHECK = "OK" ]; then
-    echo "SHA256 verified"
+    if [ $DEBUG -eq 1 ]; then
+      echo "SHA256 verified"
+    fi
   else
     echo "ERROR: SHA256 check failed"
+    exit 0
   fi
   # Set USER/GROUP ownership for new Gitea binary
   chown $USER:$GROUP $DIR/bin/gitea-$NEW_VER-$ARCH
