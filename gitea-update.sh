@@ -36,15 +36,15 @@ fi
 # Check if gitea binary exists at specified $FILE
 if test -f "$DIR/gitea"; then
   if [ $DEBUG -eq 1 ]; then
-    echo "$FILE exists"
+    echo "$DIR/gitea exists"
   fi
 else
-  echo "ERROR: $FILE does not exist"
+  echo "ERROR: $DIR/gitea does not exist"
   exit 1
 fi
 
 # Check current version
-cur_ver=$(get_current_version $FILE)
+cur_ver=$(get_current_version $DIR/gitea)
 
 if [ $DEBUG -eq 1 ]; then
   echo "Current Version: $cur_ver"
