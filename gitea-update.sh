@@ -29,21 +29,26 @@ get_current_version() {
 new_ver=$(get_latest_release "go-gitea/gitea")
 
 if [ $DEBUG -eq 1 ]; then
-  echo $new_ver
+  echo "New Version:    $new_ver"
 fi
 
 # Check if gitea binary exists at specified $FILE
 if test -f "$FILE"; then
-  echo "$FILE exists"
+  if [ $DEBUG -eq 1 ]; then
+    echo "$FILE exists"
+  fi
 else
   echo "ERROR: $FILE does not exist"
-  #exit 1
+  exit 1
 fi
 
 # Check current version
-#cur_ver=$(cut -d " " -f 3 test_output.txt)
 cur_ver=$(get_current_version $FILE)
 
 if [ $DEBUG -eq 1 ]; then
-  echo $cur_ver
+  echo "Current Version: $cur_ver"
+fi
+
+if [ $new_ver != $cur_ver ]; then
+  echo "There is a newer release available"
 fi
