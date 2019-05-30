@@ -1,19 +1,18 @@
 #!/bin/sh
 # A shell script to automatically update Gitea
-# Depends only on basic shell utilities (curl, cut, grep, sed, wget)
+# Depends only on basic shell utilities (curl, cut, find, grep, sed, wget)
 # Assumes use of systemd for Gitea start/stop
 
-# Set location of gitea binary on local system
-DIR=/usr/local/bin/gitea
-#FILE=/usr/local/bin/gitea/gitea
-# Set architecture type:
-  # darwin-10.6.386 darwin-10.6-amd64 linux-386
-  # linux-arm-5,6,7,arm64,mips,mips64,mips64le
-ARCH=linux-amd64
-USER=root
-GROUP=git
 
-DEBUG=1
+DIR=/usr/local/bin/gitea    # Set location of gitea binary on local system
+ARCH=linux-amd64            # Set architecture type:
+                            # darwin-10.6.386 darwin-10.6-amd64 linux-386
+                            # linux-arm-5,6,7,arm64,mips,mips64,mips64le
+USER=root                   # User for file permissions on Gitea binary
+GROUP=git                   # Group for file permissions on Gitea binary
+INIT_TYPE=systemd           # Specify init script type (only systemd now)
+PRUNE=1                     # If TRUE, script will delete older versions
+DEBUG=1                     # If TRUE, debug messages are printed to STDOUT
 
 get_latest_release() {
   curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
@@ -66,12 +65,19 @@ if [ $NEW_VER != $CUR_VER ]; then
   # Set permissions for new Gitea binary (rwxr-x---)
   chmod 0750 $DIR/bin/gitea-$NEW_VER-$ARCH
   # Stop the Gitea service
-  service gitea stop
+  case $INIT_TYPE in
+    systemd)
+      service gitea stop
+      ;;
+    *)
+  esac
   # Update the symlink at $DIR/gitea to pint to latest Gitea binary
   ln -sf $DIR/bin/gitea-$NEW_VER-$ARCH $DIR/gitea
   # Start the Gitea service
   service gitea start
-
+  if [ PRUNE -eq 1 ]; then
+    find $DIR/bin/ -type f ! -newer gitea-$NEW_VER-$ARCH ! -name gitea-$NEW_VER-$ARCH -delete
+  fi
 else
   if [ $DEBUG -eq 1 ]; then
     echo "The latest version is already installed"
