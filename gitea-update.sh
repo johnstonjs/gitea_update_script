@@ -63,7 +63,7 @@ if [ $NEW_VER != $CUR_VER ]; then
   #wget -N https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
   ( cd $DIR/bin && curl -O -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH )
   # Verify the checksum of the latest Gitea binary
-  SHA_CHECK = $(cd $DIR/bin && curl -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c)
+  SHA_CHECK=$(cd $DIR/bin && curl -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c)
 
   if [ $SHA_CHECK -eq "gitea-$NEW_VER-$ARCH: OK" ]; then
     if [ $DEBUG -eq 1 ]; then
