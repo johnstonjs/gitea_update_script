@@ -1,7 +1,8 @@
 #/bin/sh
 
 # Set location of gitea binary on local system
-FILE=/usr/local/bin/gitea/gitea
+DIR=/usr/local/bin/gitea
+#FILE=/usr/local/bin/gitea/gitea
 # Set architecture type:
   # darwin-10.6.386 darwin-10.6-amd64 linux-386
   # linux-arm-5,6,7,arm64,mips,mips64,mips64le
@@ -33,7 +34,7 @@ if [ $DEBUG -eq 1 ]; then
 fi
 
 # Check if gitea binary exists at specified $FILE
-if test -f "$FILE"; then
+if test -f "$DIR/gitea"; then
   if [ $DEBUG -eq 1 ]; then
     echo "$FILE exists"
   fi
@@ -50,5 +51,14 @@ if [ $DEBUG -eq 1 ]; then
 fi
 
 if [ $new_ver != $cur_ver ]; then
-  echo "There is a newer release available"
+  if [ $DEBUG -eq 1 ]; then
+    echo "There is a newer release available, downloading..."
+  fi
+  #wget -N https://dl.gitea.io/gitea/$VERSION/gitea-$VERSION-$ARCH -P $DIR/bin/
+
+else
+  if [ $DEBUG -eq 1 ]; then
+    echo "The latest version is already installed"
+    exit 1
+  fi
 fi
