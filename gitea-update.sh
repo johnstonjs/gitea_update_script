@@ -65,7 +65,7 @@ if [ $NEW_VER != $CUR_VER ]; then
   # Verify the checksum of the latest Gitea binary
   SHA_CHECK=$(cd $DIR/bin && curl -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c)
   SHA_CHECK=echo $SHA_CHECK | cut -d " "  -f 2
-  if [ $SHA_CHECK = "OK" ]; then
+  if [ $SHA_CHECK = "OK " ]; then
     echo "SHA256 verified"
   else
     echo "ERROR: SHA256 check failed"
