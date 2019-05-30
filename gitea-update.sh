@@ -66,7 +66,7 @@ if [ $NEW_VER != $CUR_VER ]; then
   SHA_CHECK=$(cd $DIR/bin && curl -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c)
   echo $SHA_CHECK
   echo "gitea-$NEW_VER-$ARCH: OK"
-  if [ $SHA_CHECK -eq "gitea-$NEW_VER-$ARCH: OK" ]; then
+  if [ $SHA_CHECK = "gitea-$NEW_VER-$ARCH: OK" ]; then
     if [ $DEBUG -eq 1 ]; then
       echo "SHA256 verified"
     fi
