@@ -4,7 +4,7 @@
 # Assumes use of systemd for Gitea start/stop
 
 
-DIR=/usr/local/bin/gitea    # Set location of gitea binary on local system
+DIR=/usr/local/bin    # Set location of gitea binary on local system
 URL=https://github.com/go-gitea/gitea/releases/download
 ARCH=linux-amd64            # Set architecture type:
                             # darwin-10.6.386 darwin-10.6-amd64 linux-386
@@ -60,9 +60,9 @@ if [ $NEW_VER != $CUR_VER ]; then
   fi
   # Download the latest version of Gitea binary
   #wget -N https://github.com/go-gitea/gitea/releases/download/v$NEW_VER/gitea-$NEW_VER-$ARCH -P $DIR/bin/
-  ( cd $DIR/bin && curl -s -O -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH )
+  ( cd $DIR && curl -s -O -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH )
   # Verify the checksum of the latest Gitea binary
-  SHA_CHECK=$(cd $DIR/bin && curl -s -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c | cut -d " " -f 2)
+  SHA_CHECK=$(cd $DIR && curl -s -L $URL/v$NEW_VER/gitea-$NEW_VER-$ARCH.sha256 | sha256sum -c | cut -d " " -f 2)
   if [ $SHA_CHECK = "OK" ]; then
     if [ $DEBUG -eq 1 ]; then
       echo "SHA256 verified"
@@ -72,9 +72,9 @@ if [ $NEW_VER != $CUR_VER ]; then
     exit 0
   fi
   # Set USER/GROUP ownership for new Gitea binary
-  chown $USER:$GROUP $DIR/bin/gitea-$NEW_VER-$ARCH
+  chown $USER:$GROUP $DIR/gitea-$NEW_VER-$ARCH
   # Set permissions for new Gitea binary (rwxr-x---)
-  chmod 0750 $DIR/bin/gitea-$NEW_VER-$ARCH
+  chmod 0750 $DIR/gitea-$NEW_VER-$ARCH
   # Stop the Gitea service
   case $INIT_TYPE in
     systemd)
@@ -83,7 +83,7 @@ if [ $NEW_VER != $CUR_VER ]; then
     *)
   esac
   # Update the symlink at $DIR/gitea to pint to latest Gitea binary
-  ln -sf $DIR/bin/gitea-$NEW_VER-$ARCH $DIR/gitea
+  ln -sf $DIR/gitea-$NEW_VER-$ARCH $DIR/gitea
   # Start the Gitea service
   case $INIT_TYPE in
     systemd)
@@ -92,8 +92,8 @@ if [ $NEW_VER != $CUR_VER ]; then
     *)
   esac
   if [ $PRUNE -eq 1 ]; then
-    find $DIR/bin/ -maxdepth 1 -type f ! -newer $DIR/bin/gitea-$CUR_VER-$ARCH ! \
-    -wholename $DIR/bin/gitea-$CUR_VER-$ARCH -delete
+    find $DIR -maxdepth 1 -type f ! -newer $DIR/gitea-$CUR_VER-$ARCH ! \
+    -wholename $DIR/gitea-$CUR_VER-$ARCH -delete
   fi
   if [ $DEBUG -eq 1 ]; then
     echo "Gitea upgraded to v$NEW_VER"
