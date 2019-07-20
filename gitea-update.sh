@@ -13,6 +13,7 @@ USER=root                   # User for file permissions on Gitea binary
 GROUP=git                   # Group for file permissions on Gitea binary
 INIT_TYPE=systemd           # Specify init script type (only systemd now)
 PRUNE=1                     # If TRUE, script will delete older versions
+RC=0                        # If TRUE, script will download Release Candidates
 DEBUG=1                     # If TRUE, debug messages are printed to STDOUT
 
 get_latest_release() {
@@ -36,6 +37,16 @@ NEW_VER=$(get_latest_release "go-gitea/gitea")
 if [ $DEBUG -eq 1 ]; then
   echo "New Version:    $NEW_VER"
 fi
+
+# Check if new version is a Release Candidate (contains "-rc")
+case $NEW_VER in *-rc*)
+  if [ $RC -eq 0 ]; then
+    if [ $DEBUG -eq 1 ]; then
+      echo "New Version is Release Candidate, quitting"
+    fi
+  exit 0
+  fi
+esac
 
 # Check if gitea binary exists at specified $FILE
 if test -f "$DIR/gitea"; then
